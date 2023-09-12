@@ -3,42 +3,35 @@
 #include <iostream>
 #include <stdio.h>
 #include <conio.h>
+#include <windows.h>
 
-int main()
-{
+int main(){
 	char tmp = NULL;
-	char command = NULL;
-
-    printf("사용자의 행복한 VC++\n");
+    printf("SDK의 행복한 VC++\n");
 	while (1) {
-		printf("command>");
-		//scanf_s("%s", &tmp, sizeof(tmp));
+		printf("command> ");
 		tmp = _getch();
-		if (tmp == 27) {
-			return(0);
-		}
-		if (tmp == 13) {
+		if (tmp == 27) {	//esc
 			break;
 		}
-		if (tmp == 113) {
-			printf("q : CS 화이팅\n");
-			break;
-		}else if(tmp == 119) {
-			printf("W : 과제 너무 싫다\n");	
-			break;
-		}else if (tmp == 101) {
-			printf("e :e-class\n");
-			break;
-		}else if (tmp == 114) {
-			printf("r : qwer\n");
-			break;
-		}else if (tmp == command) {
-			printf("command를 입력하세요.");
-			exit;
-		}else {
-			printf("입력오류 재입력\n");
-			exit;
+		switch (tmp)
+		{case 113:	//q
+			printf("q : qwer 화이팅\n");
+			continue;
+		case 119:	//w
+			printf("W : 과제 너무 좋다\n");
+			continue;
+		case 101:	//e
+			printf("e : 담주부턴 과제량 3배다\n");
+			continue;
+		case 114:	//r
+			printf("r : 행복합니다.\n");
+			continue;
+		default:
+			printf("입력오류\n");
+			continue;
 		}
 	}
+	return(0);
 }
 
