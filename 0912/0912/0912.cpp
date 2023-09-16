@@ -3,33 +3,37 @@
 #include <iostream>
 #include <stdio.h>
 #include <conio.h>
-#include <windows.h>
 
 int main(){
-	char tmp = NULL;
+	char input;
+	char enter;
     printf("SDK의 행복한 VC++\n");
 	while (1) {
 		printf("command> ");
-		tmp = _getch();
-		if (tmp == 27) {	//esc
-			break;
+		input = _getch();
+		if (input == 27) {		//esc 입력시
+			exit(0);
 		}
-		switch (tmp)
-		{case 113:	//q
-			printf("q : qwer 화이팅\n");
-			continue;
-		case 119:	//w
-			printf("W : 과제 너무 좋다\n");
-			continue;
-		case 101:	//e
-			printf("e : 담주부턴 과제량 3배다\n");
-			continue;
-		case 114:	//r
-			printf("r : 행복합니다.\n");
-			continue;
-		default:
-			printf("입력오류\n");
-			continue;
+		enter = _getch();
+		if (enter == 13); {		//enter 입력시
+			switch (input)
+			{
+			case 113:	//q 입력시
+				printf("q : qwer 화이팅\n");
+				continue;
+			case 119:	//w 입력시
+				printf("W : 과제 너무 좋다\n");
+				continue;
+			case 101:	//e 입력시
+				printf("e : 담주부턴 과제량 3배다\n");
+				continue;
+			case 114:	//r 입력시
+				printf("r : 행복합니다.\n");
+				continue;
+			default:	//다른키 입력시
+				printf("입력오류\n");
+				continue;
+			}
 		}
 	}
 	return(0);
