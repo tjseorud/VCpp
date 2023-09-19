@@ -6,7 +6,7 @@
 int main(){
 	char input;
 	char enter;
-    printf("SDK의 행복한 VC++\n");
+   	printf("SDK의 행복한 VC++\n");
 	while (1) {
 		printf("command> ");
 		input = _getch();
@@ -15,8 +15,7 @@ int main(){
 		}
 		enter = _getch();
 		if (enter == 13); {		//enter 입력시
-			switch (input)
-			{
+			switch (input) {
 			case 113:	//q 입력시
 				printf("q : qwer 화이팅\n");
 				continue;
