@@ -1,8 +1,7 @@
 ﻿// 0912.cpp : 이 파일에는 'main' 함수가 포함됩니다. 거기서 프로그램 실행이 시작되고 종료됩니다.
 //
-#include <iostream>
-#include <stdio.h>
-#include <conio.h>
+#include <stdio.h>	//표준 입출력
+#include <conio.h>	//콘솔
 
 int main(){
 	char input;
