@@ -7,7 +7,7 @@
 using namespace std;
 
 int main() {
-    char input[3];
+    char input[2];
     char ch;
     int i = 0;
 
@@ -17,27 +17,25 @@ int main() {
             Sleep(300);
             if (ch == 27) {                 // ESC key
                 exit(1);
-            }
-            else {
-                input[i++] = ch;
-                if (i >= 3) {   			//←75 ↑72 →77 ↓80
-                    if (input[i - 3] == 80 && input[i - 2] == 77 && input[i - 1] == 'a') {
-                        cout << "아도겐! =o" << endl;
-                    }
-                    else if (input[i - 3] == 77 && input[i - 2] == 77 && input[i - 1] == 's') {
-                        cout << "돌진!!" << endl;
-                    }
-                    else if (input[i - 3] == 75 && input[i - 2] == 72 && input[i - 1] == 'd') {
-                        cout << "?" << endl;
-                    }
-                    else if (input[i - 3] == 77 && input[i - 2] == 72 && input[i - 1] == 'f') {
-                        cout << "뻐큐! ( -_-)-ㅗ" << endl;
-                    }
-                    /*else if (input[i - 10] == 72 && input[i - 9] == 72 && input[i - 8] == 80 && input[i - 7] == 80 && input[i - 6] == 75 && input[i - 5] == 77 && input[i - 4] == 75 && input[i - 3] == 77 && input[i - 2] == 'b' && input[i - 1] == 'a') {
-                        cout << "88224646BA... 어라?"\n << endl;
-                    }*/
+            }         
+            input[i++] = ch;
+            if (i >= 3) {   			//←75 ↑72 →77 ↓80
+                if (input[i - 1] == 'a') {
+                    cout << "아도겐! =o" << endl;
                 }
-            }
+                else if (input[i - 1] == 's') {
+                    cout << "돌진!!" << endl;
+                }
+                else if (input[i - 1] == 'd') {
+                    cout << "?" << endl;
+                }
+                else if (input[i - 1] == 'f') {
+                    cout << "뻐큐! ( -_-)-ㅗ" << endl;
+                }
+                /*else if (input[i - 10] == 72 && input[i - 9] == 72 && input[i - 8] == 80 && input[i - 7] == 80 && input[i - 6] == 75 && input[i - 5] == 77 && input[i - 4] == 75 && input[i - 3] == 77 && input[i - 2] == 'b' && input[i - 1] == 'a') {
+                    cout << "88224646BA... 어라?"\n << endl;
+                }*/
+            }          
         }
     }
     return 0;
