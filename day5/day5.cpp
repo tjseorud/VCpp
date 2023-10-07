@@ -17,24 +17,19 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		case WM_LBUTTONDOWN:
 		{
-			///** 사각형 그리기
-			//*/
-			//HDC hdc = GetDC(hwnd);
-			//RECT rect = { 50, 50, 150, 150 }; // 왼쪽 상단 좌표 (50, 50)에서 오른쪽 하단 좌표 (150, 150)까지의 사각형
-			//HBRUSH hBrush = CreateSolidBrush(RGB(255, 0, 255)); // 핑크 브러시 생성
+			startPoint.x = LOWORD(lParam);		//X 값
+			startPoint.y = HIWORD(lParam);		//Y 값
+			isMouseLButtonPressed = 1;			//마우스를 입력할때 1
 
-			//if (hBrush == NULL)
-			//{
-			//	MessageBox(NULL, L"CreateSolidBrush failed!", L"Error", MB_ICONERROR);
-			//	exit(-1);	//예외
-			//}
+			/** 사각형 그리기
+			*/
+			//HDC hdc = GetDC(hwnd);
+			//RECT rect = { 50,50,150,150 }; // 왼쪽 상단 좌표 (50, 50)에서 오른쪽 하단 좌표 (150, 150)까지의 사각형
+			//HBRUSH hBrush = CreateSolidBrush(RGB(255, 0, 255)); // 핑크 브러시 생성
 
 			//// 그리기
 			//FillRect(hdc, &rect, hBrush); // 사각형을 빨간색으로 채우기
 			//ReleaseDC(hwnd, hdc);
-			startPoint.x = LOWORD(lParam);		//X 값
-			startPoint.y = HIWORD(lParam);		//Y 값
-			isMouseLButtonPressed = 1;			//마우스를 입력할때 1
 		}
 		break;
 		//강의에 안나왔지만 마우스가 움직일때의 이벤트를 뜻합니다.
@@ -52,19 +47,18 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 		case WM_LBUTTONUP:
 		{
-			///** 사각형 그리기
-			//*/
-			//HDC hdc = GetDC(hwnd);
-			//RECT rect = { 50, 50, 150, 150 }; // 왼쪽 상단 좌표 (50, 50)에서 오른쪽 하단 좌표 (150, 150)까지의 사각형
-			//
+			endPoint.x = LOWORD(lParam);
+			endPoint.y = HIWORD(lParam);
+			isMouseLButtonPressed = 0;			//마우스를 입력안할때 1
 
+			/** 사각형 그리기
+			*/
+			//HDC hdc = GetDC(hwnd);
+			//RECT rect = { 50,50,150,150 }; // 왼쪽 상단 좌표 (50, 50)에서 오른쪽 하단 좌표 (150, 150)까지의 사각형
+			
 			//// 그리기
 			//FillRect(hdc, &rect, (HBRUSH)(COLOR_WINDOW+1)); // 사각형을 빨간색으로 채우기
 			//ReleaseDC(hwnd, hdc);
-			endPoint.x = LOWORD(lParam);
-			endPoint.y = HIWORD(lParam);
-
-			isMouseLButtonPressed = 0;			//마우스를 입력안할때 1
 
 			// WM_PAINT 메시지를 유발하여 네모를 화면에 그립니다.
 			InvalidateRect(hwnd, NULL, TRUE);
@@ -72,21 +66,25 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		case WM_PAINT:
 		{
 			HDC hdc = GetDC(hwnd);
-
+			HBRUSH hBrush = (HBRUSH)CreateSolidBrush(RGB(255, 0, 255)); // 핑크 브러시 생성
+			HGDIOBJ oldBrush = SelectObject(hdc, hBrush);	//생성한 브러시를 DC에 연결하고 기존 브러시는 oldBrush에 저장
 			if (isMouseLButtonPressed)
 			{
 				RECT rect;
 				GetClientRect(hwnd, &rect);
 				FillRect(hdc, &rect, (HBRUSH)(COLOR_WINDOW + 1));
-
-				MoveToEx(hdc, startPoint.x, startPoint.y, NULL);
-				LineTo(hdc, endPoint.x, endPoint.y);
+				Rectangle(hdc, startPoint.x, startPoint.y, endPoint.x, endPoint.y);	//왼쪽 상단 좌표 (x, y)에서 오른쪽 하단 좌표 (x, y)까지의 사각형
+				//MoveToEx(hdc, startPoint.x, startPoint.y, NULL);	//선 그리기
+				//LineTo(hdc, endPoint.x, endPoint.y);	//선 그리기
 			}
+			SelectObject(hdc, oldBrush);	//기존에 사용하던 브러시로 복구
+			DeleteObject(hBrush);	//생성한 브러시를 제거
 			ReleaseDC(hwnd, hdc);
+
 			/** 사각형 그리기
 			*/
 			//HDC hdc = GetDC(hwnd);
-			//RECT rect = { 50, 50, 150, 150 }; // 왼쪽 상단 좌표 (50, 50)에서 오른쪽 하단 좌표 (150, 150)까지의 사각형
+			//RECT rect = { 50,50,150,150 }; // 왼쪽 상단 좌표 (50, 50)에서 오른쪽 하단 좌표 (150, 150)까지의 사각형
 			//HBRUSH hBrush = CreateSolidBrush(RGB(255, 0, 255)); // 핑크 브러시 생성
 
 			//// 그리기
@@ -191,7 +189,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		}
 		/*else
 		{
-
+			202007041
 		}*/
 	}
 	//종료 메시지 보내기
