@@ -11,7 +11,8 @@ POINT endPoint = { 0 };				//끝 값
 int isMouseLButtonPressed = 0;		//마우스를 입력했을때 기본값
 
 // 윈도우의 이벤트를 처리하는 콜백(Callback) 함수.
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+////윈도우 핸들러,UINT 메시지, Word PARAM, Long PARAM
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)	
 {
 	switch (uMsg)
 	{
@@ -19,7 +20,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			startPoint.x = LOWORD(lParam);		//X 값
 			startPoint.y = HIWORD(lParam);		//Y 값
-			isMouseLButtonPressed = 1;			//마우스를 입력할때 1
+			isMouseLButtonPressed = 1;		//마우스를 입력할때 1
 
 			/** 사각형 그리기
 			*/
@@ -179,7 +180,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	while (msg.message != WM_QUIT)
 	{
 		// 메시지 처리.
-		if (GetMessage(&msg, hwnd, 0, 0))
+		if (GetMessage(&msg, NULL, 0, 0))
 			//if (PeekMessage(&msg, hwnd, 0, 0, PM_REMOVE)) // PM_REMOVE의 자리는 이 메세지를 쓰고 어떡할거냐.의 의미인데 지운다는 것임.
 		{
 			// 메시지 해석해줘.
