@@ -21,6 +21,7 @@ int isKeyPressed = 0;
 
 RECT rect_user = { 5, 5, 10, 10 }; // 왼쪽 상단 좌표 (50, 50)에서 오른쪽 하단 좌표 (150, 150)까지의 사각형
 RECT rect_target = { 50, 50, 150, 150 }; // 왼쪽 상단 좌표 (50, 50)에서 오른쪽 하단 좌표 (150, 150)까지의 사각형
+RECT temp; //사각형의 교차 부분이 있는지를 true/false로 반환
 
 // 윈도우의 이벤트를 처리하는 콜백(Callback) 함수.
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -31,6 +32,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	HBRUSH hBrush_target = CreateSolidBrush(RGB(255, 0, 255));
 	HBRUSH hBrush_eraser = CreateSolidBrush(RGB(255, 255, 255));
 	const wchar_t* text = L"Crash!!!";
+	const wchar_t* tt = L"asdf";
 
 	switch (uMsg)
 	{
@@ -67,6 +69,11 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			FillRect(hdc, &rect_user, hBrush_user);
 			FillRect(hdc, &rect_target, hBrush_target);
+			//핑크 박스안에 파란박스가 들어가면 화면에 출력
+			if (IntersectRect(&temp, &rect_user, &rect_target))
+			{
+				TextOut(hdc, 85, 90, tt, lstrlen(tt));	//asdf
+			}
 		}
 		else
 		{
