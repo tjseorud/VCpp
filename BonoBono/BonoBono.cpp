@@ -11,26 +11,28 @@
 #include <tchar.h>
 #include "resource.h"
 
-bool isBoxVisible = false;		//상자
-bool isCircleVisible = false;	//타원
-bool isBonobonoVisible = false;	//보노보노
-bool isRyanVisible = false;		//라이온
-bool isCubeVisible = false;		//큐브
+bool isBoxVisible = false;			//상자
+bool isCircleVisible = false;		//타원
+bool isBonobonoVisible = false;		//보노보노
+bool isRyanVisible = false;			//라이온
+bool isCubeVisible = false;			//큐브
 
 POINT startPoint = { 0 };
 POINT endPoint = { 0 };
 int isMouseLButtonPressed = 0;
 PAINTSTRUCT ps;
 HBITMAP myBitmap, oldBitmap;
-HINSTANCE hInstance;
+HINSTANCE gInst;
 HDC hdc;
+LPCWSTR bmpName;
+bool isClose;
 
 void DrawBox(HWND hwnd, HDC hdc) {
 	RECT rect;
-	GetClientRect(hwnd, &rect);
+	//GetClientRect(hwnd, &rect);
 	if (isBoxVisible) {
 		// 박스 그리기		
-		HDC hdc = GetDC(hwnd);			// 디바이스 컨텍스트 얻기
+		hdc = GetDC(hwnd);			// 디바이스 컨텍스트 얻기
 		HBRUSH hBrush = CreateSolidBrush(RGB(255, 0, 0)); // 브러시 생성
 		//생성한 브러시를 DC에 연결하고 기존 브러시는 oldBrush에 저장
 		HGDIOBJ oldBrush = SelectObject(hdc, hBrush);
@@ -43,7 +45,7 @@ void DrawBox(HWND hwnd, HDC hdc) {
 	}
 	else if (isCircleVisible) {
 		// 타원 그리기
-		HDC hdc = GetDC(hwnd);			// 디바이스 컨텍스트 얻기
+		hdc = GetDC(hwnd);			// 디바이스 컨텍스트 얻기
 		HBRUSH hBrush = CreateSolidBrush(RGB(255, 0, 255)); // 브러시 생성
 		//생성한 브러시를 DC에 연결하고 기존 브러시는 oldBrush에 저장
 		HGDIOBJ oldBrush = SelectObject(hdc, hBrush);
@@ -55,20 +57,27 @@ void DrawBox(HWND hwnd, HDC hdc) {
 		ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
 	}
 	else if (isBonobonoVisible) {
-		// 보노보노 그리기
-		HDC hdc, Memdc;
-		hdc = BeginPaint(hwnd, &ps);
+		if (isClose) {
+			bmpName = MAKEINTRESOURCE(IDB_BITMAP2);	//눈 감은
+		}
+		else {
+			bmpName = MAKEINTRESOURCE(IDB_BITMAP1); //눈 뜬
+		}
+		//보노보노 그리기
+		HDC Memdc;
+		hdc = GetDC(hwnd);				// 디바이스 컨텍스트 얻기
 		Memdc = CreateCompatibleDC(hdc);		//메모리dc 생성
-		myBitmap = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_BITMAP1)); //로딩
+		myBitmap = LoadBitmap(gInst, bmpName); //1 로딩
 		oldBitmap = (HBITMAP)SelectObject(Memdc, myBitmap); //비트맵 선택
-		BitBlt(hdc, 0, 0, 123, 160, Memdc, 0, 0, SRCCOPY); //복사 및 출력
+		// 800, 480
+		BitBlt(hdc, 268, 112, 263, 257, Memdc, 0, 0, SRCCOPY); //복사 및 출력
 		SelectObject(Memdc, oldBitmap);
-		DeleteObject(myBitmap);		
-		//Ellipse(hdc, 300, 200, 500, 400);				
+		DeleteObject(myBitmap);	
+		ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
 	}
 	else if (isRyanVisible) {
 		// 라이온 그리기
-		HDC hdc = GetDC(hwnd);			// 디바이스 컨텍스트 얻기			
+		hdc = GetDC(hwnd);				// 디바이스 컨텍스트 얻기			
 		HBRUSH hBrush = CreateSolidBrush(RGB(255, 200, 15)); // 브러시 생성
 		//생성한 브러시를 DC에 연결하고 기존 브러시는 oldBrush에 저장
 		HGDIOBJ oldBrush = SelectObject(hdc, hBrush);
@@ -92,7 +101,6 @@ void DrawBox(HWND hwnd, HDC hdc) {
 		DeleteObject(hBrush);			//생성한 브러시를 제거
 		ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
 	}
-
 }
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	switch (uMsg) {
@@ -158,17 +166,23 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 		case WM_LBUTTONUP: {
 			endPoint.x = LOWORD(lParam);
 			endPoint.y = HIWORD(lParam);
-			isMouseLButtonPressed = 0;
+			isMouseLButtonPressed = 0;		
 			InvalidateRect(hwnd, NULL, TRUE);
 		}
+		break;
+		case WM_KEYDOWN: {
+			SetFocus(hwnd);
+			isClose = !isClose;
+		}
+		break;
 		case WM_PAINT: {
-			//PAINTSTRUCT ps;
-			HDC hdc = BeginPaint(hwnd, &ps);
+			PAINTSTRUCT ps;			
 			//메인 화면인데 처음만 나온다..
-			//HBRUSH hBrush = CreateSolidBrush(RGB(255, 240, 200));
-			//FillRect(hdc, &ps.rcPaint, hBrush);
-			DrawBox(hwnd, hdc);
+			HDC hdc = BeginPaint(hwnd, &ps);
+			HBRUSH hBrush = CreateSolidBrush(RGB(255, 240, 200));
+			FillRect(hdc, &ps.rcPaint, hBrush);
 			EndPaint(hwnd, &ps);
+			DrawBox(hwnd, hdc);
 		}
 		break;
 		case WM_DESTROY: {
@@ -207,10 +221,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
 	wc.lpszMenuName = NULL;
 	wc.lpszClassName = L"Test";
 	//wc.hIconSm = LoadIcon(wc.hInstance, IDI_APPLICATION);
+	gInst = hInstance;
 
-	if (!RegisterClass(&wc)) {
-		return 1;
-	}
+	if(!RegisterClass(&wc)) { return 1; }
 
 	RECT rect = { 0, 0, 800, 480 };
 	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, 0);
@@ -220,9 +233,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
 	hwnd = CreateWindow(wc.lpszClassName, TEXT("보노보노"), WS_OVERLAPPEDWINDOW,
 		0, 0, width, height, NULL, NULL, hInstance, NULL);
 
-	if (!hwnd) {
-		return FALSE;
-	}
+	if(!hwnd) { return FALSE; }
 
 	hbutton1 = CreateWindow(L"BUTTON", L"Box", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
 		20, 16, 140, 64, hwnd, (HMENU)1, hInstance, NULL);
