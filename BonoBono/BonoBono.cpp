@@ -75,6 +75,8 @@ void DrawBox(HWND hwnd, HDC hdc) {
 		SelectObject(Memdc, oldBitmap);
 		DeleteObject(myBitmap);	
 		ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
+
+		if (GetFocus() != hwnd) SetFocus(hwnd);
 	}
 	else if (isRyan) {
 		// 라이온 그리기
@@ -171,12 +173,11 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 			InvalidateRect(hwnd, NULL, TRUE);
 		}
 		break;
-		case WM_KEYDOWN: {		
+		case WM_KEYDOWN: {
 			if (wParam == VK_SPACE) {
-				SetFocus(hwnd);
 				isClose = !isClose;
-				InvalidateRect(hwnd, NULL, TRUE);
 			}
+			InvalidateRect(hwnd, NULL, TRUE);
 		}
 		break;
 		case WM_PAINT: {
