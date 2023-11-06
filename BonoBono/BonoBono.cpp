@@ -11,26 +11,27 @@
 #include <tchar.h>
 #include "resource.h"
 
-bool isBoxVisible = false;			//상자
-bool isCircleVisible = false;		//타원
-bool isBonobonoVisible = false;		//보노보노
-bool isRyanVisible = false;			//라이온
-bool isCubeVisible = false;			//큐브
+bool isBox = false;			//상자
+bool isCircle = false;		//타원
+bool isBonobono = false;	//보노보노
+bool isRyan = false;		//라이온
+bool isCube = false;		//큐브
 
 POINT startPoint = { 0 };
 POINT endPoint = { 0 };
 int isMouseLButtonPressed = 0;
+
+HDC hdc;
 PAINTSTRUCT ps;
 HBITMAP myBitmap, oldBitmap;
 HINSTANCE gInst;
-HDC hdc;
 LPCWSTR bmpName;
 bool isClose;
 
 void DrawBox(HWND hwnd, HDC hdc) {
 	RECT rect;
 	//GetClientRect(hwnd, &rect);
-	if (isBoxVisible) {
+	if (isBox) {
 		// 박스 그리기		
 		hdc = GetDC(hwnd);			// 디바이스 컨텍스트 얻기
 		HBRUSH hBrush = CreateSolidBrush(RGB(255, 0, 0)); // 브러시 생성
@@ -43,7 +44,7 @@ void DrawBox(HWND hwnd, HDC hdc) {
 		DeleteObject(hBrush);			//생성한 브러시를 제거
 		ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
 	}
-	else if (isCircleVisible) {
+	else if (isCircle) {
 		// 타원 그리기
 		hdc = GetDC(hwnd);			// 디바이스 컨텍스트 얻기
 		HBRUSH hBrush = CreateSolidBrush(RGB(255, 0, 255)); // 브러시 생성
@@ -56,7 +57,7 @@ void DrawBox(HWND hwnd, HDC hdc) {
 		DeleteObject(hBrush);			//생성한 브러시를 제거
 		ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
 	}
-	else if (isBonobonoVisible) {
+	else if (isBonobono) {
 		if (isClose) {
 			bmpName = MAKEINTRESOURCE(IDB_BITMAP2);	//눈 감은
 		}
@@ -75,7 +76,7 @@ void DrawBox(HWND hwnd, HDC hdc) {
 		DeleteObject(myBitmap);	
 		ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
 	}
-	else if (isRyanVisible) {
+	else if (isRyan) {
 		// 라이온 그리기
 		hdc = GetDC(hwnd);				// 디바이스 컨텍스트 얻기			
 		HBRUSH hBrush = CreateSolidBrush(RGB(255, 200, 15)); // 브러시 생성
@@ -88,7 +89,7 @@ void DrawBox(HWND hwnd, HDC hdc) {
 		DeleteObject(hBrush);			//생성한 브러시를 제거
 		ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
 	}
-	else if (isCubeVisible) {
+	else if (isCube) {
 		// 큐브 그리기
 		HDC hdc = GetDC(hwnd);			// 디바이스 컨텍스트 얻기	
 		HBRUSH hBrush = CreateSolidBrush(RGB(0, 255, 0)); // 브러시 생성
@@ -106,45 +107,45 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 	switch (uMsg) {
 		case WM_COMMAND: {	//버튼
 			if (LOWORD(wParam) == 1) {
-				isBoxVisible = true;
-				isCircleVisible = false;
-				isBonobonoVisible = false;
-				isRyanVisible = false;
-				isCubeVisible = false;
+				isBox = true;
+				isCircle = false;
+				isBonobono = false;
+				isRyan = false;
+				isCube = false;
 				InvalidateRect(hwnd, NULL, TRUE);
 			}
 			else if (LOWORD(wParam) == 2) {
-				isBoxVisible = false;
-				isCircleVisible = true;
-				isBonobonoVisible = false;
-				isRyanVisible = false;
-				isCubeVisible = false;
+				isBox = false;
+				isCircle = true;
+				isBonobono = false;
+				isRyan = false;
+				isCube = false;
 				InvalidateRect(hwnd, NULL, TRUE);
 			}
 			else if (LOWORD(wParam) == 3) {
-				isBoxVisible = false;
-				isCircleVisible = false;
-				isBonobonoVisible = true;
-				isRyanVisible = false;
-				isCubeVisible = false;
+				isBox = false;
+				isCircle = false;
+				isBonobono = true;
+				isRyan = false;
+				isCube = false;
 				InvalidateRect(hwnd, NULL, TRUE);
 			}
 			else if (LOWORD(wParam) == 4) {
-				isBoxVisible = false;
-				isCircleVisible = false;
-				isBonobonoVisible = false;
-				isRyanVisible = true;
-				isCubeVisible = false;
+				isBox = false;
+				isCircle = false;
+				isBonobono = false;
+				isRyan = true;
+				isCube = false;
 				InvalidateRect(hwnd, NULL, TRUE);
 			}
 			else if (LOWORD(wParam) == 5) {
-				isBoxVisible = false;
-				isCircleVisible = false;
-				isBonobonoVisible = false;
-				isRyanVisible = false;
-				isCubeVisible = true;
+				isBox = false;
+				isCircle = false;
+				isBonobono = false;
+				isRyan = false;
+				isCube = true;
 				InvalidateRect(hwnd, NULL, TRUE);
-			}
+			}			
 			break;
 		}
 		case WM_LBUTTONDOWN: {
@@ -170,9 +171,12 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 			InvalidateRect(hwnd, NULL, TRUE);
 		}
 		break;
-		case WM_KEYDOWN: {
-			SetFocus(hwnd);
-			isClose = !isClose;
+		case WM_KEYDOWN: {		
+			if (wParam == VK_SPACE) {
+				SetFocus(hwnd);
+				isClose = !isClose;
+				InvalidateRect(hwnd, NULL, TRUE);
+			}
 		}
 		break;
 		case WM_PAINT: {
