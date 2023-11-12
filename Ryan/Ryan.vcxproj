@@ -18,16 +18,10 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="yuhanCG.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="yuhanCG.cpp" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{4ad32c0e-d3f8-4531-bebb-a8292c3e63cb}</ProjectGuid>
+    <ProjectGuid>{064bbe3d-6593-496e-a04a-b24f7c24914f}</ProjectGuid>
     <RootNamespace>Ryan</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -132,6 +126,12 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="yuhanCG.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="yuhanCG.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

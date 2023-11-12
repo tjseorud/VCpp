@@ -4,10 +4,6 @@
 #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
 #endif
 
-#include <stdlib.h>
-#include <malloc.h>
-#include <memory.h>
-#include <tchar.h>
 #include "resource.h"
 #include "../Ryan/yuhanCG.h"
 
@@ -64,18 +60,18 @@ void DrawBox(HWND hwnd, HDC hdc) {
 		else {
 			bmpName = MAKEINTRESOURCE(IDB_BITMAP1); //눈 뜬
 		}
-		//보노보노 그리기
+		// 보노보노 그리기
 		HDC Memdc;
 		hdc = GetDC(hwnd);				// 디바이스 컨텍스트 얻기
 		Memdc = CreateCompatibleDC(hdc);		//메모리dc 생성
-		myBitmap = LoadBitmap(gInst, bmpName); //1 로딩
+		myBitmap = LoadBitmap(gInst, bmpName); //1 2 로딩
 		oldBitmap = (HBITMAP)SelectObject(Memdc, myBitmap); //비트맵 선택
-		// 800, 480
+		//800, 400
 		BitBlt(hdc, 268, 112, 263, 258, Memdc, 0, 0, SRCCOPY); //복사 및 출력
 		SelectObject(Memdc, oldBitmap);
-		DeleteObject(myBitmap);	
+		DeleteObject(myBitmap);
 		ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
-
+		//void DrawBonobono();
 		if (GetFocus() != hwnd) { SetFocus(hwnd); }
 	}
 	else if (isRyan) {
@@ -89,6 +85,7 @@ void DrawBox(HWND hwnd, HDC hdc) {
 		SelectObject(Memdc, oldBitmap);
 		DeleteObject(myBitmap);
 		ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
+		//void DrawRyan();
 	}
 	else if (isCube) {
 		// 큐브 그리기

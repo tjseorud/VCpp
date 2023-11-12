@@ -1,8 +1,9 @@
-#pragma once //중복선언 방지
+#pragma once
+#include <stdlib.h>
+#include <malloc.h>
+#include <memory.h>
+#include <tchar.h>
 #include <windows.h>
 
-class yuhanCG {
-public:
-	void DrawBonobono(HWND hWnd, HDC hdc, int blink);
-	void DrawRyan(HWND hWnd, HDC hdc, int left, int top, int right, int bottom);
-};
+void DrawBonobono(HWND hWnd, HDC hdc, int blink);
+void DrawRyan(HWND hWnd, HDC hdc, int left, int top, int right, int bottom);
