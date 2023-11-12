@@ -4,12 +4,12 @@
 #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
 #endif
 
-#include <windows.h>
 #include <stdlib.h>
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
 #include "resource.h"
+#include "../Ryan/yuhanCG.h"
 
 bool isBox = false;			//상자
 bool isCircle = false;		//타원
@@ -71,24 +71,23 @@ void DrawBox(HWND hwnd, HDC hdc) {
 		myBitmap = LoadBitmap(gInst, bmpName); //1 로딩
 		oldBitmap = (HBITMAP)SelectObject(Memdc, myBitmap); //비트맵 선택
 		// 800, 480
-		BitBlt(hdc, 268, 112, 263, 257, Memdc, 0, 0, SRCCOPY); //복사 및 출력
+		BitBlt(hdc, 268, 112, 263, 258, Memdc, 0, 0, SRCCOPY); //복사 및 출력
 		SelectObject(Memdc, oldBitmap);
 		DeleteObject(myBitmap);	
 		ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
 
-		if (GetFocus() != hwnd) SetFocus(hwnd);
+		if (GetFocus() != hwnd) { SetFocus(hwnd); }
 	}
 	else if (isRyan) {
 		// 라이온 그리기
-		hdc = GetDC(hwnd);				// 디바이스 컨텍스트 얻기			
-		HBRUSH hBrush = CreateSolidBrush(RGB(255, 200, 15)); // 브러시 생성
-		//생성한 브러시를 DC에 연결하고 기존 브러시는 oldBrush에 저장
-		HGDIOBJ oldBrush = SelectObject(hdc, hBrush);
-		SelectObject(hdc, hBrush);
-		FillRect(hdc, &rect, (HBRUSH)(COLOR_WINDOW + 1));
-		Ellipse(hdc, startPoint.x, startPoint.y, endPoint.x, endPoint.y);
-		SelectObject(hdc, oldBrush);	//기존에 사용하던 브러시로 복구
-		DeleteObject(hBrush);			//생성한 브러시를 제거
+		HDC Memdc;
+		hdc = GetDC(hwnd);				// 디바이스 컨텍스트 얻기
+		Memdc = CreateCompatibleDC(hdc);		//메모리dc 생성
+		myBitmap = LoadBitmap(gInst, MAKEINTRESOURCE(IDB_BITMAP3)); //3 로딩
+		oldBitmap = (HBITMAP)SelectObject(Memdc, myBitmap); //비트맵 선택
+		BitBlt(hdc, startPoint.x, startPoint.y, 263, 258, Memdc, 0, 0, SRCCOPY); //복사 및 출력
+		SelectObject(Memdc, oldBitmap);
+		DeleteObject(myBitmap);
 		ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
 	}
 	else if (isCube) {
@@ -230,11 +229,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
 
 	if(!RegisterClass(&wc)) { return 1; }
 
+	// Window viewport 영역 조정
 	RECT rect = { 0, 0, 800, 480 };
-	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, 0);
+	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, TRUE);
 	int width = rect.right - rect.left;
 	int height = rect.bottom - rect.top;
 
+	// 윈도우 생성
 	hwnd = CreateWindow(wc.lpszClassName, TEXT("보노보노"), WS_OVERLAPPEDWINDOW,
 		0, 0, width, height, NULL, NULL, hInstance, NULL);
 
