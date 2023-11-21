@@ -24,6 +24,13 @@ HINSTANCE gInst;
 LPCWSTR bmpName;
 bool isClose;
 
+HINSTANCE hInst;
+HWND hMainWnd;
+const int windowWidth = 800;
+const int windowHeight = 480;
+const int margin = 8;
+const int padding = 8;
+
 void DrawBox(HWND hwnd, HDC hdc) {
 	RECT rect;
 	//GetClientRect(hwnd, &rect);
@@ -177,15 +184,22 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 		}
 		break;
 		case WM_PAINT: {
-			PAINTSTRUCT ps;			
-			//메인 화면인데 처음만 나온다..
+			PAINTSTRUCT ps;		
 			HDC hdc = BeginPaint(hwnd, &ps);
+			HBRUSH transparentBrush = CreateSolidBrush(RGB(255, 255, 255));
+			HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, transparentBrush);
+			Rectangle(hdc, margin, margin, windowWidth - margin, windowHeight - margin);		
 			HBRUSH hBrush = CreateSolidBrush(RGB(255, 240, 200));
-			FillRect(hdc, &ps.rcPaint, hBrush);
+			//FillRect(hdc, &ps.rcPaint, hBrush);			
+			SelectObject(hdc, oldBrush);
+			DeleteObject(transparentBrush);
 			EndPaint(hwnd, &ps);
 			DrawBox(hwnd, hdc);
 		}
 		break;
+		case WM_CLOSE:
+			DestroyWindow(hwnd);
+			break;
 		case WM_DESTROY: {
 			PostQuitMessage(0);
 			break;
@@ -196,7 +210,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 		}
 	}
 	//return DefWindowProc(hwnd, uMsg, wParam, lParam);
-	return S_OK;
+	return 0;
 }
 
 #ifdef UNICODE
@@ -205,16 +219,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nCmdShow)
 #endif
 {
-	HWND hwnd;
 	HWND hbutton1, hbutton2, hbutton3, hbutton4, hbutton5;
 
 	WNDCLASS wc;
-	ZeroMemory(&wc, sizeof(wc));
+	memset(&wc, 0, sizeof(wc));
 	//wc.cbSize = sizeof(WNDCLASS);
 	wc.style = CS_HREDRAW | CS_VREDRAW;
 	wc.lpfnWndProc = WindowProc;
-	wc.cbClsExtra = 0;
-	wc.cbWndExtra = 0;
+	//wc.cbClsExtra = 0;
+	//wc.cbWndExtra = 0;
 	wc.hInstance = hInstance;
 	wc.hIcon = LoadIcon(hInstance, IDI_APPLICATION);
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
@@ -226,38 +239,37 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
 
 	if(!RegisterClass(&wc)) { return 1; }
 
-	// Window viewport 영역 조정
-	RECT rect = { 0, 0, 800, 480 };
-	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, TRUE);
-	int width = rect.right - rect.left;
-	int height = rect.bottom - rect.top;
+	//// Window viewport 영역 조정
+	//RECT rect = { 0, 0, 800, 480 };
+	//AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, TRUE);
+	//int width = rect.right - rect.left;
+	//int height = rect.bottom - rect.top;
 
 	// 윈도우 생성
-	hwnd = CreateWindow(wc.lpszClassName, TEXT("보노보노"), WS_OVERLAPPEDWINDOW,
-		0, 0, width, height, NULL, NULL, hInstance, NULL);
-
-	if(!hwnd) { return FALSE; }
+	hMainWnd = CreateWindow(wc.lpszClassName, L"보노보노", WS_OVERLAPPEDWINDOW,
+		0, 0, windowWidth, windowHeight, NULL, NULL, hInstance, NULL);
 
 	hbutton1 = CreateWindow(L"BUTTON", L"Box", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-		20, 16, 140, 64, hwnd, (HMENU)1, hInstance, NULL);
+		20, 16, 140, 64, hMainWnd, (HMENU)1, hInstance, NULL);
 
 	hbutton2 = CreateWindow(L"BUTTON", L"Circle", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-		175, 16, 140, 64, hwnd, (HMENU)2, hInstance, NULL);
+		175, 16, 140, 64, hMainWnd, (HMENU)2, hInstance, NULL);
 
 	hbutton3 = CreateWindow(L"BUTTON", L"Bonobono", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-		330, 16, 140, 64, hwnd, (HMENU)3, hInstance, NULL);
+		330, 16, 140, 64, hMainWnd, (HMENU)3, hInstance, NULL);
 
 	hbutton4 = CreateWindow(L"BUTTON", L"Ryan", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-		485, 16, 140, 64, hwnd, (HMENU)4, hInstance, NULL);
+		485, 16, 140, 64, hMainWnd, (HMENU)4, hInstance, NULL);
 
 	hbutton5 = CreateWindow(L"BUTTON", L"Cube", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-		640, 16, 140, 64, hwnd, (HMENU)5, hInstance, NULL);
+		640, 16, 140, 64, hMainWnd, (HMENU)5, hInstance, NULL);
+	
+	if (!hMainWnd) { return FALSE; }
 
-	ShowWindow(hwnd, SW_SHOW);
-	UpdateWindow(hwnd);
+	ShowWindow(hMainWnd, nCmdShow);
+	UpdateWindow(hMainWnd);
 
 	MSG msg;
-	ZeroMemory(&msg, sizeof(msg));
 
 	while (GetMessage(&msg, NULL, 0, 0)) {
 		TranslateMessage(&msg);
