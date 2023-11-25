@@ -154,12 +154,29 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 			break;
 		}
 		case WM_LBUTTONDOWN: {
+			RECT area = { margin, 100 + margin, windowWidth - margin, windowHeight - margin };
+
+			POINT mousePos;
+			mousePos.x = LOWORD(lParam);
+			mousePos.y = HIWORD(lParam);
+
+			if (!PtInRect(&area, mousePos)) break;
+
 			startPoint.x = LOWORD(lParam);	//시작점 x
 			startPoint.y = HIWORD(lParam);	//시작점 y
+
 			isMouseLButtonPressed = 1;
 		}
 		break;
 		case WM_MOUSEMOVE: {
+			RECT area = { margin, 100 + margin, windowWidth - margin, windowHeight - margin };
+
+			POINT mousePos;
+			mousePos.x = LOWORD(lParam);
+			mousePos.y = HIWORD(lParam);
+
+			if (!PtInRect(&area, mousePos)) break;
+
 			// 마우스 이동 중
 			if (isMouseLButtonPressed) {
 				endPoint.x = LOWORD(lParam);
@@ -170,6 +187,14 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 		}
 		break;
 		case WM_LBUTTONUP: {
+			RECT area = { margin, 100 + margin, windowWidth - margin, windowHeight - margin };
+
+			POINT mousePos;
+			mousePos.x = LOWORD(lParam);
+			mousePos.y = HIWORD(lParam);
+
+			if (!PtInRect(&area, mousePos)) break;
+
 			endPoint.x = LOWORD(lParam);
 			endPoint.y = HIWORD(lParam);
 			isMouseLButtonPressed = 0;		
@@ -188,9 +213,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 			HDC hdc = BeginPaint(hwnd, &ps);
 			HBRUSH transparentBrush = CreateSolidBrush(RGB(255, 255, 255));
 			HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, transparentBrush);
-			Rectangle(hdc, margin, margin, windowWidth - margin, windowHeight - margin);		
-			HBRUSH hBrush = CreateSolidBrush(RGB(255, 240, 200));
-			//FillRect(hdc, &ps.rcPaint, hBrush);			
+			Rectangle(hdc, margin, 100 + margin, windowWidth - margin, windowHeight - margin);
 			SelectObject(hdc, oldBrush);
 			DeleteObject(transparentBrush);
 			EndPaint(hwnd, &ps);
@@ -231,7 +254,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
 	wc.hInstance = hInstance;
 	wc.hIcon = LoadIcon(hInstance, IDI_APPLICATION);
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+	wc.hbrBackground = CreateSolidBrush(RGB(255, 240, 200));
 	wc.lpszMenuName = NULL;
 	wc.lpszClassName = L"Test";
 	//wc.hIconSm = LoadIcon(wc.hInstance, IDI_APPLICATION);
@@ -239,15 +262,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
 
 	if(!RegisterClass(&wc)) { return 1; }
 
-	//// Window viewport 영역 조정
-	//RECT rect = { 0, 0, 800, 480 };
-	//AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, TRUE);
-	//int width = rect.right - rect.left;
-	//int height = rect.bottom - rect.top;
+	// Window viewport 영역 조정
+	RECT rect = { 0, 0, windowWidth, windowHeight };
+	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, TRUE);
+	int width = rect.right - rect.left;
+	int height = rect.bottom - rect.top;
 
 	// 윈도우 생성
 	hMainWnd = CreateWindow(wc.lpszClassName, L"보노보노", WS_OVERLAPPEDWINDOW,
-		0, 0, windowWidth, windowHeight, NULL, NULL, hInstance, NULL);
+		0, 0, width, height, NULL, NULL, hInstance, NULL);
 
 	hbutton1 = CreateWindow(L"BUTTON", L"Box", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
 		20, 16, 140, 64, hMainWnd, (HMENU)1, hInstance, NULL);
