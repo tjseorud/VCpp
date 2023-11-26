@@ -249,8 +249,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
 	//wc.cbSize = sizeof(WNDCLASS);
 	wc.style = CS_HREDRAW | CS_VREDRAW;
 	wc.lpfnWndProc = WindowProc;
-	//wc.cbClsExtra = 0;
-	//wc.cbWndExtra = 0;
 	wc.hInstance = hInstance;
 	wc.hIcon = LoadIcon(hInstance, IDI_APPLICATION);
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
@@ -271,7 +269,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
 	// 윈도우 생성
 	hMainWnd = CreateWindow(wc.lpszClassName, L"보노보노", WS_OVERLAPPEDWINDOW,
 		0, 0, width, height, NULL, NULL, hInstance, NULL);
-
+	//버튼들 모양
 	hbutton1 = CreateWindow(L"BUTTON", L"Box", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
 		20, 16, 140, 64, hMainWnd, (HMENU)1, hInstance, NULL);
 
