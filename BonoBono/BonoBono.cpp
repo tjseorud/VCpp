@@ -82,15 +82,13 @@ void DrawBox(HWND hwnd, HDC hdc) {
 		if (GetFocus() != hwnd) { SetFocus(hwnd); }
 	}
 	else if (isRyan) {		
-		endPoint = startPoint;
-
 		// 라이온 그리기
 		HDC Memdc;
 		hdc = GetDC(hwnd);				// 디바이스 컨텍스트 얻기
 		Memdc = CreateCompatibleDC(hdc);		//메모리dc 생성
 		myBitmap = LoadBitmap(gInst, MAKEINTRESOURCE(IDB_BITMAP3)); //3 로딩
 		oldBitmap = (HBITMAP)SelectObject(Memdc, myBitmap); //비트맵 선택
-		BitBlt(hdc, endPoint.x, startPoint.y, 263, 250, Memdc, 0, 0, SRCCOPY); //복사 및 출력
+		StretchBlt(hdc, startPoint.x, startPoint.y, endPoint.x, endPoint.y, Memdc, 0,0, 263, 250, SRCCOPY); //복사 및 출력
 		SelectObject(Memdc, oldBitmap);
 		DeleteObject(myBitmap);
 		ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
