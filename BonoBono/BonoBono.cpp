@@ -23,6 +23,7 @@ HBITMAP myBitmap, oldBitmap;
 HINSTANCE gInst;
 LPCWSTR bmpName;
 bool isClose;
+HCURSOR crosshair; 
 
 HINSTANCE hInst;
 HWND hMainWnd;
@@ -74,25 +75,25 @@ void DrawBox(HWND hwnd, HDC hdc) {
 		myBitmap = LoadBitmap(gInst, bmpName); //1 2 로딩
 		oldBitmap = (HBITMAP)SelectObject(Memdc, myBitmap); //비트맵 선택
 		//800, 400
-		BitBlt(hdc, 268, 112, 263, 258, Memdc, 0, 0, SRCCOPY); //복사 및 출력
+		BitBlt(hdc, 268, 157, 263, 258, Memdc, 0, 0, SRCCOPY); //복사 및 출력
 		SelectObject(Memdc, oldBitmap);
 		DeleteObject(myBitmap);
 		ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
-		//void DrawBonobono();
 		if (GetFocus() != hwnd) { SetFocus(hwnd); }
 	}
-	else if (isRyan) {
+	else if (isRyan) {		
+		endPoint = startPoint;
+
 		// 라이온 그리기
 		HDC Memdc;
 		hdc = GetDC(hwnd);				// 디바이스 컨텍스트 얻기
 		Memdc = CreateCompatibleDC(hdc);		//메모리dc 생성
 		myBitmap = LoadBitmap(gInst, MAKEINTRESOURCE(IDB_BITMAP3)); //3 로딩
 		oldBitmap = (HBITMAP)SelectObject(Memdc, myBitmap); //비트맵 선택
-		BitBlt(hdc, startPoint.x, startPoint.y, 263, 258, Memdc, 0, 0, SRCCOPY); //복사 및 출력
+		BitBlt(hdc, endPoint.x, startPoint.y, 263, 250, Memdc, 0, 0, SRCCOPY); //복사 및 출력
 		SelectObject(Memdc, oldBitmap);
 		DeleteObject(myBitmap);
 		ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
-		//void DrawRyan();
 	}
 	else if (isCube) {
 		// 큐브 그리기
@@ -107,6 +108,9 @@ void DrawBox(HWND hwnd, HDC hdc) {
 		DeleteObject(hBrush);			//생성한 브러시를 제거
 		ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
 	}
+}
+void DrawBonobono() {
+
 }
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	switch (uMsg) {
@@ -175,6 +179,16 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 			mousePos.x = LOWORD(lParam);
 			mousePos.y = HIWORD(lParam);
 
+			crosshair = LoadCursor(NULL, IDC_CROSS);
+			// 마우스가  변경
+			if (margin ,margin, windowWidth - margin, windowHeight - margin) {
+				SetCursor(crosshair);
+			}
+			else {
+				// 마우스가  변경
+				SetCursor(LoadCursor(NULL, IDC_ARROW));
+			}
+
 			if (!PtInRect(&area, mousePos)) break;
 
 			// 마우스 이동 중
@@ -202,6 +216,15 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 		}
 		break;
 		case WM_KEYDOWN: {
+			//스페이스바 누르면
+			if (wParam == VK_SPACE) {
+				isClose = !isClose;
+			}
+			InvalidateRect(hwnd, NULL, TRUE);
+		}
+		break;
+		case WM_KEYUP: {
+			//스페이스바 때면
 			if (wParam == VK_SPACE) {
 				isClose = !isClose;
 			}

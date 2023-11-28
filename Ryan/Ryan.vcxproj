@@ -130,7 +130,14 @@
     <ClCompile Include="yuhanCG.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Res.h" />
     <ClInclude Include="yuhanCG.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\BonoBono\BonoA.bmp" />
+    <Image Include="..\BonoBono\BonoB.bmp" />
+    <Image Include="..\BonoBono\Box.bmp" />
+    <Image Include="..\BonoBono\Ryan.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

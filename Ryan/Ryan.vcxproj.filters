@@ -23,5 +23,22 @@
     <ClInclude Include="yuhanCG.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Res.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\BonoBono\BonoA.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\BonoBono\BonoB.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\BonoBono\Box.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\BonoBono\Ryan.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
 </Project>
