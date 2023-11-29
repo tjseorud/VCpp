@@ -42,5 +42,11 @@
     <Image Include="Box.bmp">
       <Filter>리소스 파일</Filter>
     </Image>
+    <Image Include="Cube.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="bitmap5.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
 </Project>

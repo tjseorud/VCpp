@@ -23,8 +23,9 @@ HBITMAP myBitmap, oldBitmap;
 HINSTANCE gInst;
 LPCWSTR bmpName;
 bool isClose;
-HCURSOR crosshair; 
 
+HCURSOR crosshair; 
+RECT rect;
 HINSTANCE hInst;
 HWND hMainWnd;
 const int windowWidth = 800;
@@ -33,86 +34,97 @@ const int margin = 8;
 const int padding = 8;
 
 void DrawBox(HWND hwnd, HDC hdc) {
-	RECT rect;
-	//GetClientRect(hwnd, &rect);
-	if (isBox) {
-		// 박스 그리기		
-		hdc = GetDC(hwnd);			// 디바이스 컨텍스트 얻기
-		HBRUSH hBrush = CreateSolidBrush(RGB(255, 0, 0)); // 브러시 생성
-		//생성한 브러시를 DC에 연결하고 기존 브러시는 oldBrush에 저장
-		HGDIOBJ oldBrush = SelectObject(hdc, hBrush);
-		SelectObject(hdc, hBrush);
-		FillRect(hdc, &rect, (HBRUSH)(COLOR_WINDOW + 1));
-		Rectangle(hdc, startPoint.x, startPoint.y, endPoint.x, endPoint.y);
-		SelectObject(hdc, oldBrush);	//기존에 사용하던 브러시로 복구
-		DeleteObject(hBrush);			//생성한 브러시를 제거
-		ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
-	}
-	else if (isCircle) {
-		// 타원 그리기
-		hdc = GetDC(hwnd);			// 디바이스 컨텍스트 얻기
-		HBRUSH hBrush = CreateSolidBrush(RGB(255, 0, 255)); // 브러시 생성
-		//생성한 브러시를 DC에 연결하고 기존 브러시는 oldBrush에 저장
-		HGDIOBJ oldBrush = SelectObject(hdc, hBrush);
-		SelectObject(hdc, hBrush);
-		FillRect(hdc, &rect, (HBRUSH)(COLOR_WINDOW + 1));
-		Ellipse(hdc, startPoint.x, startPoint.y, endPoint.x, endPoint.y);
-		SelectObject(hdc, oldBrush);	//기존에 사용하던 브러시로 복구
-		DeleteObject(hBrush);			//생성한 브러시를 제거
-		ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
-	}
-	else if (isBonobono) {
-		if (isClose) {
-			bmpName = MAKEINTRESOURCE(IDB_BITMAP2);	//눈 감은
-		}
-		else {
-			bmpName = MAKEINTRESOURCE(IDB_BITMAP1); //눈 뜬
-		}
-		// 보노보노 그리기
-		HDC Memdc;
-		hdc = GetDC(hwnd);				// 디바이스 컨텍스트 얻기
-		Memdc = CreateCompatibleDC(hdc);		//메모리dc 생성
-		myBitmap = LoadBitmap(gInst, bmpName); //1 2 로딩
-		oldBitmap = (HBITMAP)SelectObject(Memdc, myBitmap); //비트맵 선택
-		//800, 400
-		BitBlt(hdc, 268, 157, 263, 258, Memdc, 0, 0, SRCCOPY); //복사 및 출력
-		SelectObject(Memdc, oldBitmap);
-		DeleteObject(myBitmap);
-		ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
-		if (GetFocus() != hwnd) { SetFocus(hwnd); }
-	}
-	else if (isRyan) {		
-		// 라이온 그리기
-		HDC Memdc;
-		hdc = GetDC(hwnd);				// 디바이스 컨텍스트 얻기
-		Memdc = CreateCompatibleDC(hdc);		//메모리dc 생성
-		myBitmap = LoadBitmap(gInst, MAKEINTRESOURCE(IDB_BITMAP3)); //3 로딩
-		oldBitmap = (HBITMAP)SelectObject(Memdc, myBitmap); //비트맵 선택
-		StretchBlt(hdc, startPoint.x, startPoint.y, endPoint.x, endPoint.y, Memdc, 0,0, 263, 250, SRCCOPY); //복사 및 출력
-		SelectObject(Memdc, oldBitmap);
-		DeleteObject(myBitmap);
-		ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
-	}
-	else if (isCube) {
-		// 큐브 그리기
-		HDC hdc = GetDC(hwnd);			// 디바이스 컨텍스트 얻기	
-		HBRUSH hBrush = CreateSolidBrush(RGB(0, 255, 0)); // 브러시 생성
-		//생성한 브러시를 DC에 연결하고 기존 브러시는 oldBrush에 저장
-		HGDIOBJ oldBrush = SelectObject(hdc, hBrush);
-		SelectObject(hdc, hBrush);
-		FillRect(hdc, &rect, (HBRUSH)(COLOR_WINDOW + 1));
-		Rectangle(hdc, startPoint.x, startPoint.y, endPoint.x, endPoint.y);
-		SelectObject(hdc, oldBrush);	//기존에 사용하던 브러시로 복구
-		DeleteObject(hBrush);			//생성한 브러시를 제거
-		ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
-	}
-}
-void DrawBonobono() {
+	// 박스 그리기		
+	hdc = GetDC(hwnd);			// 디바이스 컨텍스트 얻기
+	HBRUSH hBrush = CreateSolidBrush(RGB(255, 0, 0)); // 브러시 생성
+	//생성한 브러시를 DC에 연결하고 기존 브러시는 oldBrush에 저장
+	HGDIOBJ oldBrush = SelectObject(hdc, hBrush);
+	SelectObject(hdc, hBrush);
+	FillRect(hdc, &rect, (HBRUSH)(COLOR_WINDOW + 1));
+	Rectangle(hdc, startPoint.x, startPoint.y, endPoint.x, endPoint.y);
+	SelectObject(hdc, oldBrush);	//기존에 사용하던 브러시로 복구
+	DeleteObject(hBrush);			//생성한 브러시를 제거
+	ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
 
+	//// 박스 그리기
+	//HDC Memdc;
+	//hdc = GetDC(hwnd);				// 디바이스 컨텍스트 얻기
+	//Memdc = CreateCompatibleDC(hdc);		//메모리dc 생성
+	//myBitmap = LoadBitmap(gInst, MAKEINTRESOURCE(IDB_BITMAP4)); //4 로딩
+	//oldBitmap = (HBITMAP)SelectObject(Memdc, myBitmap); //비트맵 선택
+	//StretchBlt(hdc, startPoint.x, startPoint.y, endPoint.x, endPoint.y, Memdc, 0, 0, 130, 139, SRCCOPY); //복사 및 출력
+	//SelectObject(Memdc, oldBitmap);
+	//DeleteObject(myBitmap);
+	//ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
+}
+void DrawCircle(HWND hwnd, HDC hdc) {
+	// 타원 그리기
+	hdc = GetDC(hwnd);			// 디바이스 컨텍스트 얻기
+	HBRUSH hBrush = CreateSolidBrush(RGB(255, 0, 255)); // 브러시 생성
+	//생성한 브러시를 DC에 연결하고 기존 브러시는 oldBrush에 저장
+	HGDIOBJ oldBrush = SelectObject(hdc, hBrush);
+	SelectObject(hdc, hBrush);
+	FillRect(hdc, &rect, (HBRUSH)(COLOR_WINDOW + 1));
+	Ellipse(hdc, startPoint.x, startPoint.y, endPoint.x, endPoint.y);
+	SelectObject(hdc, oldBrush);	//기존에 사용하던 브러시로 복구
+	DeleteObject(hBrush);			//생성한 브러시를 제거
+	ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
+}
+void DrawBonobono(HWND hwnd, HDC hdc) {
+	if (isClose) {
+		bmpName = MAKEINTRESOURCE(IDB_BITMAP2);	//눈 감은
+	}
+	else {
+		bmpName = MAKEINTRESOURCE(IDB_BITMAP1); //눈 뜬
+	}
+	// 보노보노 그리기
+	HDC Memdc;
+	hdc = GetDC(hwnd);				// 디바이스 컨텍스트 얻기
+	Memdc = CreateCompatibleDC(hdc);		//메모리dc 생성
+	myBitmap = LoadBitmap(gInst, bmpName); //1 2 로딩
+	oldBitmap = (HBITMAP)SelectObject(Memdc, myBitmap); //비트맵 선택
+	//800, 400
+	BitBlt(hdc, 268, 157, 263, 258, Memdc, 0, 0, SRCCOPY); //복사 및 출력
+	SelectObject(Memdc, oldBitmap);
+	DeleteObject(myBitmap);
+	ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
+	if (GetFocus() != hwnd) { SetFocus(hwnd); }
+}
+void DrawRyan(HWND hwnd, HDC hdc) {
+	// 라이온 그리기
+	HDC Memdc;
+	hdc = GetDC(hwnd);				// 디바이스 컨텍스트 얻기
+	Memdc = CreateCompatibleDC(hdc);		//메모리dc 생성
+	myBitmap = LoadBitmap(gInst, MAKEINTRESOURCE(IDB_BITMAP3)); //3 로딩
+	oldBitmap = (HBITMAP)SelectObject(Memdc, myBitmap); //비트맵 선택
+	StretchBlt(hdc, startPoint.x, startPoint.y, endPoint.x, endPoint.y, Memdc, 0, 0, 263, 250, SRCCOPY); //복사 및 출력
+	SelectObject(Memdc, oldBitmap);
+	DeleteObject(myBitmap);
+	ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
+}
+void DrawCube(HWND hwnd, HDC hdc) {	
+	// 큐브 그리기
+	HDC Memdc;
+	hdc = GetDC(hwnd);				// 디바이스 컨텍스트 얻기
+	Memdc = CreateCompatibleDC(hdc);		//메모리dc 생성
+	myBitmap = LoadBitmap(gInst, MAKEINTRESOURCE(IDB_BITMAP5)); //5 로딩
+	oldBitmap = (HBITMAP)SelectObject(Memdc, myBitmap); //비트맵 선택
+	StretchBlt(hdc, startPoint.x, startPoint.y, endPoint.x, endPoint.y, Memdc, 0, 0, 130, 101, SRCCOPY); //복사 및 출력
+	SelectObject(Memdc, oldBitmap);
+	DeleteObject(myBitmap);
+	ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
+}
+void Draw(HWND hwnd, HDC hdc) {
+	//RECT rect;
+	if (isBox) { DrawBox(hwnd, hdc); }
+	else if (isCircle) { DrawCircle(hwnd, hdc); }
+	else if (isBonobono) { DrawBonobono(hwnd, hdc); }
+	else if (isRyan) { DrawRyan(hwnd, hdc); }
+	else if (isCube) { DrawCube(hwnd, hdc); }
 }
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	switch (uMsg) {
-		case WM_COMMAND: {	//버튼
+		case WM_COMMAND: {	//버튼;
 			if (LOWORD(wParam) == 1) {
 				isBox = true;
 				isCircle = false;
@@ -152,8 +164,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 				isRyan = false;
 				isCube = true;
 				InvalidateRect(hwnd, NULL, TRUE);
-			}			
-			break;
+			}
+			break;			
 		}
 		case WM_LBUTTONDOWN: {
 			RECT area = { margin, 100 + margin, windowWidth - margin, windowHeight - margin };
@@ -178,12 +190,12 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 			mousePos.y = HIWORD(lParam);
 
 			crosshair = LoadCursor(NULL, IDC_CROSS);
-			// 마우스가  변경
-			if (margin ,margin, windowWidth - margin, windowHeight - margin) {
+			// 마우스가 CROSS로 변경
+			if (windowWidth - margin, windowHeight - margin) {
 				SetCursor(crosshair);
 			}
 			else {
-				// 마우스가  변경
+				// 마우스가 ARROW로 변경
 				SetCursor(LoadCursor(NULL, IDC_ARROW));
 			}
 
@@ -238,12 +250,13 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 			SelectObject(hdc, oldBrush);
 			DeleteObject(transparentBrush);
 			EndPaint(hwnd, &ps);
-			DrawBox(hwnd, hdc);
+			Draw(hwnd, hdc);
 		}
 		break;
-		case WM_CLOSE:
+		case WM_CLOSE: {
 			DestroyWindow(hwnd);
 			break;
+		}
 		case WM_DESTROY: {
 			PostQuitMessage(0);
 			break;
