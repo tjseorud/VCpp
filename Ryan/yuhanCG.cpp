@@ -5,12 +5,11 @@ PAINTSTRUCT ps;
 HBITMAP myBitmap, oldBitmap;
 HINSTANCE gInst;
 LPCWSTR bmpName;
-bool isClose;
-POINT startPoint = { 0 };
-POINT endPoint = { 0 };
+//bool isClose;
+//POINT startPoint = { 0 };
+//POINT endPoint = { 0 };
 
 void DrawBonobono(HWND hwnd, HDC hdc, int blink) {
-	blink = isClose;
 	if (blink) {
 		bmpName = MAKEINTRESOURCE(IDB_BITMAP2);	//눈 감은
 	}
@@ -31,10 +30,6 @@ void DrawBonobono(HWND hwnd, HDC hdc, int blink) {
 }
 
 void DrawRyan(HWND hwnd, HDC hdc, int left, int top, int right, int bottom) {
-	left = startPoint.x;
-	right = startPoint.y;
-	top = endPoint.x;
-	bottom = endPoint.y;
 	// 라이온 그리기
 	HDC Memdc;
 	hdc = GetDC(hwnd);				// 디바이스 컨텍스트 얻기

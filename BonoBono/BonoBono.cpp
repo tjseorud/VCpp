@@ -22,12 +22,12 @@ PAINTSTRUCT ps;
 HBITMAP myBitmap, oldBitmap;
 HINSTANCE gInst;
 LPCWSTR bmpName;
-bool isClose;
+bool isClose = false;		//눈
 
 HCURSOR crosshair; 
 RECT rect;
 HINSTANCE hInst;
-HWND hMainWnd;
+HWND hMainWnd, hDrawing;
 const int windowWidth = 800;
 const int windowHeight = 480;
 const int margin = 8;
@@ -114,7 +114,7 @@ void DrawCube(HWND hwnd, HDC hdc) {
 	DeleteObject(myBitmap);
 	ReleaseDC(hwnd, hdc);			// 디바이스 컨텍스트 해제
 }
-void Draw(HWND hwnd, HDC hdc) {
+void Drawing(HWND hwnd, HDC hdc) {
 	//RECT rect;
 	if (isBox) { DrawBox(hwnd, hdc); }
 	else if (isCircle) { DrawCircle(hwnd, hdc); }
@@ -122,6 +122,7 @@ void Draw(HWND hwnd, HDC hdc) {
 	else if (isRyan) { DrawRyan(hwnd, hdc); }
 	else if (isCube) { DrawCube(hwnd, hdc); }
 }
+
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	switch (uMsg) {
 		case WM_COMMAND: {	//버튼;
@@ -147,7 +148,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 				isBonobono = true;
 				isRyan = false;
 				isCube = false;
-				InvalidateRect(hwnd, NULL, TRUE);
+				InvalidateRect(hDrawing, NULL, TRUE);
 			}
 			else if (LOWORD(wParam) == 4) {
 				isBox = false;
@@ -188,16 +189,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 			POINT mousePos;
 			mousePos.x = LOWORD(lParam);
 			mousePos.y = HIWORD(lParam);
-
-			crosshair = LoadCursor(NULL, IDC_CROSS);
-			// 마우스가 CROSS로 변경
-			if (windowWidth - margin, windowHeight - margin) {
-				SetCursor(crosshair);
-			}
-			else {
-				// 마우스가 ARROW로 변경
-				SetCursor(LoadCursor(NULL, IDC_ARROW));
-			}
 
 			if (!PtInRect(&area, mousePos)) break;
 
@@ -249,16 +240,13 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 			Rectangle(hdc, margin, 100 + margin, windowWidth - margin, windowHeight - margin);
 			SelectObject(hdc, oldBrush);
 			DeleteObject(transparentBrush);
+			
+			Drawing(hwnd, hdc);
 			EndPaint(hwnd, &ps);
-			Draw(hwnd, hdc);
 		}
 		break;
 		case WM_CLOSE: {
 			DestroyWindow(hwnd);
-			break;
-		}
-		case WM_DESTROY: {
-			PostQuitMessage(0);
 			break;
 		}
 		default: {
@@ -277,22 +265,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
 #endif
 {
 	HWND hbutton1, hbutton2, hbutton3, hbutton4, hbutton5;
-
-	WNDCLASS wc;
+	WNDCLASSEX wc;
 	memset(&wc, 0, sizeof(wc));
-	//wc.cbSize = sizeof(WNDCLASS);
+	wc.cbSize = sizeof(WNDCLASSEX);
 	wc.style = CS_HREDRAW | CS_VREDRAW;
 	wc.lpfnWndProc = WindowProc;
+	wc.cbClsExtra = 0;
+	wc.cbWndExtra = 0;
 	wc.hInstance = hInstance;
 	wc.hIcon = LoadIcon(hInstance, IDI_APPLICATION);
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wc.hbrBackground = CreateSolidBrush(RGB(255, 240, 200));
 	wc.lpszMenuName = NULL;
-	wc.lpszClassName = L"Test";
+	wc.lpszClassName = L"Test1";
 	//wc.hIconSm = LoadIcon(wc.hInstance, IDI_APPLICATION);
 	gInst = hInstance;
 
-	if(!RegisterClass(&wc)) { return 1; }
+	if(!RegisterClassEx(&wc)) { return 1; }
 
 	// Window viewport 영역 조정
 	RECT rect = { 0, 0, windowWidth, windowHeight };
@@ -301,8 +290,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
 	int height = rect.bottom - rect.top;
 
 	// 윈도우 생성
-	hMainWnd = CreateWindow(wc.lpszClassName, L"보노보노", WS_OVERLAPPEDWINDOW,
+	hMainWnd = CreateWindow(L"Test1", L"보노보노", WS_OVERLAPPEDWINDOW,
 		0, 0, width, height, NULL, NULL, hInstance, NULL);
+
+	if (!hMainWnd) { return FALSE; }
+
 	//버튼들 모양
 	hbutton1 = CreateWindow(L"BUTTON", L"Box", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
 		20, 16, 140, 64, hMainWnd, (HMENU)1, hInstance, NULL);
@@ -318,14 +310,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
 
 	hbutton5 = CreateWindow(L"BUTTON", L"Cube", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
 		640, 16, 140, 64, hMainWnd, (HMENU)5, hInstance, NULL);
-	
-	if (!hMainWnd) { return FALSE; }
 
 	ShowWindow(hMainWnd, nCmdShow);
 	UpdateWindow(hMainWnd);
 
 	MSG msg;
-
 	while (GetMessage(&msg, NULL, 0, 0)) {
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
